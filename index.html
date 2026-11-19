@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0b101b" />
+    <meta
+      name="description"
+      content="Explore five atmospheric worlds in Zyberlane’s interactive XR atlas."
+    />
+    <title>My 3D World · Zyberlane XR</title>
+  </head>
+  <body>
+    <canvas
+      id="world"
+      aria-label="Interactive world. Drag to look and use WASD to walk."
+      tabindex="0"
+    ></canvas>
+    <header>
+      <a href="#hub" class="brand"><b>✧</b> MY 3D WORLD</a
+      ><button id="directory">World atlas <span>☷</span></button>
+    </header>
+    <main id="caption">
+      <small id="eyebrow"></small>
+      <h1 id="title"></h1>
+      <p id="description"></p>
+      <div id="actions"></div>
+    </main>
+    <footer>
+      <span>ZYBERLANE &nbsp; / &nbsp; XR</span
+      ><button id="settings">View & controls</button>
+    </footer>
+    <div id="stick" aria-label="Touch movement joystick"><i></i></div>
+    <div id="message" role="status"></div>
+    <div id="capture" hidden>
+      <video muted playsinline></video><canvas></canvas><output></output>
+    </div>
+    <dialog id="panel">
+      <button id="close" aria-label="Close panel">×</button>
+      <div id="contents"></div>
+    </dialog>
+    <div id="loading" role="status">Opening the observatory…</div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,282 @@
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #101522;
+  color: #faf6ed;
+  font:
+    15px "DM Sans",
+    system-ui,
+    sans-serif;
+}
+#world {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+button,
+a,
+select {
+  font: inherit;
+  color: inherit;
+}
+button,
+select {
+  cursor: pointer;
+  background: #141d2bdc;
+  border: 1px solid #c9d6dd55;
+  border-radius: 32px;
+  padding: 10px 16px;
+}
+button:hover,
+button[aria-pressed="true"] {
+  background: #384859;
+}
+button:focus-visible,
+a:focus-visible,
+select:focus-visible {
+  outline: 3px solid #98f0e4;
+}
+header,
+footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 4vw;
+  pointer-events: none;
+}
+header > *,
+footer > * {
+  pointer-events: auto;
+}
+header {
+  top: 0;
+  background: linear-gradient(#071020a6, transparent);
+}
+footer {
+  bottom: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.13em;
+  color: #d5dce0;
+}
+footer button {
+  font-size: 0.8rem;
+  letter-spacing: normal;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 750;
+  letter-spacing: 0.18em;
+}
+.brand b {
+  font-size: 32px;
+  color: #a6eadd;
+}
+#directory span {
+  margin-left: 9px;
+}
+#caption {
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding: 70px 4vw 86px;
+  width: 100%;
+  background: linear-gradient(transparent, #081020c7 65%, #070e19ee);
+}
+#caption button {
+  pointer-events: auto;
+}
+small {
+  letter-spacing: 0.22em;
+  font-size: 10px;
+  color: #abe8df;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+h1,
+h2 {
+  font-family: "Baskervville", Georgia, serif;
+  font-weight: 400;
+}
+h1 {
+  margin: 8px 0;
+  font-size: clamp(38px, 5.1vw, 84px);
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+p {
+  color: #d0d9e0;
+  max-width: 510px;
+  line-height: 1.5;
+  margin: 8px 0 16px;
+}
+#actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  max-width: 700px;
+}
+#actions button {
+  padding: 7px 14px;
+  font-size: 13px;
+}
+#actions .primary {
+  background: #b3ebdc;
+  color: #102022;
+}
+dialog {
+  width: min(455px, 92vw);
+  max-height: 80dvh;
+  background: #101a27;
+  color: #faf6ed;
+  border: 1px solid #718b94;
+  border-radius: 14px;
+  padding: 26px;
+}
+dialog::backdrop {
+  background: #0308129e;
+}
+#close {
+  float: right;
+  font-size: 21px;
+  padding: 3px 12px;
+}
+h2 {
+  font-size: 36px;
+  margin: 0 0 18px;
+}
+.row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  border: 0;
+  border-bottom: 1px solid #405160;
+  background: transparent;
+  border-radius: 0;
+  padding: 12px 0;
+}
+.row em {
+  font: 12px system-ui;
+  color: #a3b5be;
+}
+#contents label {
+  display: block;
+  margin: 14px 0;
+}
+#contents select {
+  padding: 6px;
+}
+#message {
+  position: absolute;
+  left: 50%;
+  top: 80px;
+  transform: translateX(-50%);
+  background: #111e2aeb;
+  border-radius: 8px;
+  padding: 8px 14px;
+  text-align: center;
+  pointer-events: none;
+}
+#message:empty {
+  display: none;
+}
+#capture {
+  position: absolute;
+  right: 4vw;
+  top: 82px;
+  width: min(180px, 34vw);
+  background: #101b25;
+}
+#capture video,
+#capture canvas {
+  width: 100%;
+  display: block;
+}
+#capture canvas {
+  position: absolute;
+  inset: 0;
+}
+#capture output {
+  display: block;
+  padding: 4px;
+  text-align: center;
+}
+#stick {
+  display: none;
+  position: absolute;
+  left: 19px;
+  top: 48%;
+  width: 72px;
+  height: 72px;
+  border: 1px solid #ffffff6b;
+  border-radius: 50%;
+  background: #0a162c40;
+  touch-action: none;
+}
+#stick i {
+  position: absolute;
+  inset: 22px;
+  background: #dce8ed8c;
+  border-radius: 50%;
+}
+#loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  background: #0e1825;
+  font: 24px Georgia;
+  text-align: center;
+  padding: 20px;
+}
+#loading[hidden] {
+  display: none;
+}
+.stereo header,
+.stereo main,
+.stereo #stick,
+.stereo footer span,
+.stereo #capture {
+  visibility: hidden;
+}
+.stereo footer {
+  justify-content: center;
+}
+.stereo footer button {
+  opacity: 0.75;
+}
+@media (pointer: coarse) {
+  #stick {
+    display: block;
+  }
+}
+@media (max-height: 540px) {
+  #caption {
+    padding: 12px 4vw 48px;
+  }
+  #caption h1 {
+    font-size: 34px;
+  }
+  #caption p {
+    margin: 3px 0 7px;
+  }
+  header,
+  footer {
+    padding: 7px 3vw;
+  }
+}
