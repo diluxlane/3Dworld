@@ -1,4 +1,3 @@
-import { addWater } from "./water";
 import { Reflector } from "three/examples/jsm/objects/Reflector.js";
 import * as T from "three";
 import { atlas, places, type Place } from "./catalog";
@@ -41,12 +40,11 @@ function mesh<M extends T.Material>(
 const colors = {
   hub: ["#182440", "#b77977", "#536881"],
   earth: ["#060d28", "#f3a063", "#36405d"],
-  valley: ["#112940", "#91bba6", "#345c59"],
   field: ["#201639", "#b28abc", "#604b70"],
   sculpture: ["#10162c", "#465269", "#323747"],
   lab: ["#071c2a", "#376977", "#233b51"],
 };
-export function makeEnvironment(id: Place) {
+export function makeEnvironment(id: Exclude<Place, "valley">) {
   const scene = new T.Scene(),
     rng = random(232 + places.indexOf(id)),
     [zenith, horizon, stone] = colors[id];
@@ -105,14 +103,8 @@ export function makeEnvironment(id: Place) {
     if (room || id === "hub") return 0;
     if (id === "earth")
       return 0.045 * z + 0.47 * Math.sin(x * 0.21) + 0.26 * Math.cos(z * 0.35);
-    const bank =
-      id === "valley"
-        ? -2.5 * Math.exp(-Math.pow((x - 5 * Math.sin(z * 0.06)) / 6, 2))
-        : 0;
     return (
-      bank +
-      0.48 * Math.sin(x * 0.24) * Math.cos(z * 0.19) +
-      0.23 * Math.sin(z * 0.38)
+      0.48 * Math.sin(x * 0.24) * Math.cos(z * 0.19) + 0.23 * Math.sin(z * 0.38)
     );
   };
   const limit = id === "earth" ? 14 : room ? 10 : id === "hub" ? 16 : 24;
@@ -178,13 +170,7 @@ export function makeEnvironment(id: Place) {
   const p = floor.attributes.position,
     fc = [];
   const soil = new T.Color(
-    room
-      ? "#283444"
-      : id === "valley"
-        ? "#436953"
-        : id === "field"
-          ? "#554161"
-          : "#686574",
+    room ? "#283444" : id === "field" ? "#554161" : "#686574",
   );
   for (let i = 0; i < p.count; i++) {
     const x = p.getX(i),
@@ -309,21 +295,16 @@ export function makeEnvironment(id: Place) {
       );
     });
   }
-  if (id === "valley") {
-    gate(0, -20, "#a6ffce");
-    animated.push(addWater(scene));
-  }
-  if (id === "field" || id === "valley") {
-    const field = id === "field",
-      total = field ? 2300 : 750;
+  if (id === "field") {
+    const total = 2300;
     const plant = new T.InstancedMesh(
       new T.CylinderGeometry(0.65, 1, 1, 5),
-      solid(field ? "#456568" : "#483e3b"),
+      solid("#456568"),
       total,
     );
     const crown = new T.InstancedMesh(
       new T.ConeGeometry(1, 1, 7),
-      solid(field ? "#5b807e" : "#456b5b"),
+      solid("#5b807e"),
       total * 3,
     );
     const tip = new T.InstancedMesh(
@@ -337,18 +318,10 @@ export function makeEnvironment(id: Place) {
     for (let i = 0; i < total; i++) {
       const x = rng() * 66 - 33,
         z = rng() * 64 - 32;
-      // Preserve the portal sightline from the western bank.
-      if (
-        !field &&
-        z >= -22 &&
-        z <= 11 &&
-        Math.abs(x + ((z + 20) * 8) / 27) < 3.5
-      )
-        continue;
       if (Math.abs(x - 3 * Math.sin(z * 0.1)) < 1.9 || height(x, z) < -0.8)
         continue;
       const y = height(x, z),
-        h = field ? 0.24 + rng() * 0.79 : 1 + rng() * 3.6;
+        h = 0.24 + rng() * 0.79;
       d.rotation.set(0, 0, 0);
       d.position.set(x, y + h * 0.5, z);
       d.scale.set(h * 0.035, h, h * 0.035);
@@ -356,18 +329,14 @@ export function makeEnvironment(id: Place) {
       plant.setMatrixAt(count, d.matrix);
       for (let j = 0; j < 3; j++) {
         const sign = j % 2 ? 1 : -1;
-        d.position.set(
-          x + (field ? sign * h * 0.1 : 0),
-          y + h * (0.29 + j * 0.24),
-          z,
-        );
-        d.rotation.set(0, rng() * 6, field ? sign * 0.8 : 0);
-        const width = h * (field ? 0.075 : 0.32 - j * 0.067);
-        d.scale.set(width, h * (field ? 0.38 : 0.62), width);
+        d.position.set(x + sign * h * 0.1, y + h * (0.29 + j * 0.24), z);
+        d.rotation.set(0, rng() * 6, sign * 0.8);
+        const width = h * 0.075;
+        d.scale.set(width, h * 0.38, width);
         d.updateMatrix();
         crown.setMatrixAt(count * 3 + j, d.matrix);
       }
-      if (field) {
+      {
         const tint = new T.Color().setHSL(0.46 + rng() * 0.36, 0.72, 0.69);
         for (let j = 0; j < 4; j++) {
           const a = (j * Math.PI) / 2;
@@ -391,7 +360,7 @@ export function makeEnvironment(id: Place) {
     crown.count = count * 3;
     tip.count = count * 4;
     scene.add(plant, crown);
-    if (field) {
+    {
       scene.add(tip);
       const gp = new T.BufferGeometry();
       gp.setAttribute("position", new T.Float32BufferAttribute(glow, 3));
@@ -405,10 +374,6 @@ export function makeEnvironment(id: Place) {
       });
       scene.add(new T.Points(gp, gm));
       animated.push((t) => (gm.uniforms.time.value = t));
-    } else {
-      tip.geometry.dispose();
-      tip.material.dispose();
-      tip.dispose();
     }
   }
   if (room || id === "hub") {
@@ -507,11 +472,13 @@ export function dispose(scene: T.Scene) {
           for (const u of Object.values(mat.uniforms))
             if (u.value instanceof T.Texture) resources.add(u.value);
         }
-        if ("map" in mat && mat.map instanceof T.Texture)
-          resources.add(mat.map);
+        for (const value of Object.values(mat))
+          if (value instanceof T.Texture) resources.add(value);
       }
     if (o instanceof T.InstancedMesh) resources.add(o);
     if (o instanceof Reflector) resources.add(o.getRenderTarget());
   });
+  if (scene.background instanceof T.Texture) resources.add(scene.background);
+  if (scene.environment instanceof T.Texture) resources.add(scene.environment);
   resources.forEach((o) => o.dispose());
 }

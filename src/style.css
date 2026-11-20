@@ -196,6 +196,7 @@ h2 {
   display: none;
 }
 #capture {
+  pointer-events: none;
   position: absolute;
   right: 4vw;
   top: 82px;
@@ -279,4 +280,44 @@ h2 {
   footer {
     padding: 7px 3vw;
   }
+}
+.view-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.stereo #guide {
+  display: none;
+}
+#loading:not([hidden]) {
+  gap: 12px;
+}
+#contents h3 {
+  color: #a7c3bd;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin: 18px 0 2px;
+}
+.destination img {
+  border-radius: 5px;
+  object-fit: cover;
+}
+.destination span {
+  flex: 1;
+  display: grid;
+  gap: 4px;
+  padding: 0 10px;
+}
+.destination strong {
+  font-weight: 550;
+  font-size: 14px;
+}
+.destination small {
+  letter-spacing: normal;
+  font-weight: 400;
+  text-transform: none;
+  color: #aec0c9;
+  font-size: 12px;
 }

@@ -1,11 +1,29 @@
 import * as T from "three";
 import { StereoEffect } from "three/examples/jsm/effects/StereoEffect.js";
-import { atlas, places, type Place } from "./catalog";
+import {
+  atlas,
+  places,
+  gallerySections,
+  accessHints,
+  type Place,
+} from "./catalog";
 import { makeEnvironment, dispose } from "./environment";
 import { forms, gestures, sculpture } from "./particles";
 import { Input } from "./input";
 import { Tracking } from "./tracking";
+import {
+  QualityControl,
+  pixelRatioCap,
+  type Quality,
+  type Tier,
+} from "./quality";
 import "./style.css";
+type World = Omit<ReturnType<typeof makeEnvironment>, "update"> & {
+  update(time: number, viewer: T.Vector3): void;
+  setQuality?(tier: Tier): void;
+  resolveMove?(previous: T.Vector3, next: T.Vector3): void;
+  disposeExtras?(): void;
+};
 const $ = <E extends HTMLElement = HTMLElement>(s: string) =>
   document.querySelector<E>(s)!;
 function boot() {
@@ -26,17 +44,26 @@ function boot() {
   const panel = $<HTMLDialogElement>("#panel"),
     content = $("#contents");
   let id: Place = "hub",
-    env: ReturnType<typeof makeEnvironment>,
+    env: World,
     art: ReturnType<typeof sculpture> | undefined,
     split = false,
     xr = false,
-    quality = "Auto",
-    low = matchMedia("(pointer:coarse)").matches,
-    avg = 0.018,
+    opening = false,
+    transition = 0,
+    contextLost = false,
     elapsed = 0,
-    samples = 0,
     notifyTimer = 0,
     formIndex = 0;
+  let pendingLoad: AbortController | undefined;
+  const quality = new QualityControl(matchMedia("(pointer:coarse)").matches);
+  const previous = new T.Vector3(),
+    forward = new T.Vector3(),
+    right = new T.Vector3();
+  const mouse = new T.Vector2(),
+    hitPoint = new T.Vector3(),
+    hitNormal = new T.Vector3(),
+    hitPlane = new T.Plane();
+  const loading = $("#loading");
   const note = (msg: string) => {
     clearTimeout(notifyTimer);
     $("#message").textContent = msg;
@@ -58,12 +85,13 @@ function boot() {
     location.hash = key;
   }
   const pick = () => {
+    if (!env || opening) return;
     const hit = ray.intersectObjects(env.gates)[0];
     if (hit) nav(hit.object.userData.place);
   };
   function screenRay(x: number, y: number) {
     ray.setFromCamera(
-      new T.Vector2((x / innerWidth) * 2 - 1, 1 - (y / innerHeight) * 2),
+      mouse.set((x / innerWidth) * 2 - 1, 1 - (y / innerHeight) * 2),
       camera,
     );
   }
@@ -79,11 +107,11 @@ function boot() {
     (x, y) => {
       if (!art) return;
       screenRay(x, y);
-      const normal = camera.getWorldDirection(new T.Vector3()),
-        pt = new T.Vector3();
+      const normal = camera.getWorldDirection(hitNormal),
+        pt = hitPoint;
       if (
         ray.ray.intersectPlane(
-          new T.Plane().setFromNormalAndCoplanarPoint(normal, art.obj.position),
+          hitPlane.setFromNormalAndCoplanarPoint(normal, art.obj.position),
           pt,
         )
       ) {
@@ -96,7 +124,7 @@ function boot() {
   rig.add(controller);
   controller.addEventListener("select", () => {
     ray.setFromXRController(controller);
-    if (id === "hub") {
+    if (id === "hub" || id === "valley") {
       pick();
     } else if (art) {
       if (id === "lab") art.gesture("Swipe");
@@ -113,10 +141,10 @@ function boot() {
       const x = axes[axes.length - 2],
         z = axes[axes.length - 1];
       if (Math.hypot(x, z) < 0.18) continue;
-      const dir = renderer.xr.getCamera().getWorldDirection(new T.Vector3());
+      const dir = renderer.xr.getCamera().getWorldDirection(forward);
       dir.y = 0;
       dir.normalize();
-      const side = new T.Vector3(-dir.z, 0, dir.x);
+      const side = right.set(-dir.z, 0, dir.x);
       rig.position
         .addScaledVector(dir, -z * dt * 2.5)
         .addScaledVector(side, x * dt * 2.5);
@@ -154,29 +182,56 @@ function boot() {
   }
   function directory() {
     modal("World atlas");
-    places.forEach((p) => {
-      const b = button(
-        atlas[p][0],
-        () => {
-          panel.close();
-          nav(p);
-        },
-        content,
-        "row",
-      );
-      const em = document.createElement("em");
-      em.textContent = p === id ? "Here" : p === "hub" ? "Hub" : "Enter ↗";
-      b.append(em);
-    });
+    for (const section of gallerySections) {
+      const heading = document.createElement("h3");
+      heading.textContent = section.title;
+      content.append(heading);
+      for (const p of section.entries) {
+        const b = button(
+          "",
+          () => {
+            panel.close();
+            nav(p);
+          },
+          content,
+          "row destination",
+        );
+        const img = document.createElement("img");
+        img.src = import.meta.env.BASE_URL + "atlas/" + p + ".webp";
+        img.alt = "";
+        img.width = 72;
+        img.height = 44;
+        img.loading = "lazy";
+        const copy = document.createElement("span");
+        const title = document.createElement("strong");
+        title.textContent = atlas[p][0];
+        const detail = document.createElement("small");
+        detail.textContent = accessHints[p];
+        copy.append(title, detail);
+        const action = document.createElement("em");
+        action.textContent = p === id ? "Here" : "Enter";
+        b.title = atlas[p][2];
+        b.append(img, copy, action);
+      }
+    }
   }
   function resize() {
     camera.aspect = innerWidth / innerHeight;
     camera.updateProjectionMatrix();
     if (!renderer.xr.isPresenting) {
-      renderer.setPixelRatio(Math.min(devicePixelRatio, low ? 1 : 1.7));
+      renderer.setPixelRatio(
+        Math.min(devicePixelRatio, pixelRatioCap[quality.tier]),
+      );
       stereo.setSize(innerWidth, innerHeight);
     }
-    art?.quality(low);
+    art?.quality(quality.tier === "Low");
+  }
+  function applyQuality() {
+    env?.setQuality?.(quality.tier);
+    renderer.shadowMap.enabled = id === "valley" && quality.tier !== "Low";
+    renderer.shadowMap.autoUpdate = true;
+    renderer.shadowMap.needsUpdate = true;
+    resize();
   }
   function toggleSplit() {
     tracking.stop();
@@ -240,12 +295,11 @@ function boot() {
     const label = document.createElement("label");
     label.textContent = "Render quality  ";
     const sel = document.createElement("select");
-    for (const q of ["Auto", "High", "Low"])
-      sel.add(new Option(q, q, false, q === quality));
+    for (const q of ["Auto", "Low", "Balanced", "High"])
+      sel.add(new Option(q, q, false, q === quality.mode));
     sel.onchange = () => {
-      quality = sel.value;
-      low = quality === "Low" || (quality === "Auto" && avg > 0.028);
-      resize();
+      quality.select(sel.value as Quality);
+      applyQuality();
     };
     label.append(sel);
     content.append(label);
@@ -261,17 +315,65 @@ function boot() {
   }
   function spawn() {
     rig.position.set(id === "valley" ? -8 : 0, 0, id === "hub" ? 9 : 7);
+    rig.position.y = env.height(rig.position.x, rig.position.z);
     input.reset();
     camera.position.set(0, 1.7, 0);
   }
-  function openWorld(key: Place) {
+  function release(world: World) {
+    world.scene.remove(rig);
+    dispose(world.scene);
+    world.disposeExtras?.();
+  }
+  async function openWorld(key: Place) {
+    const request = ++transition;
+    pendingLoad?.abort();
+    const loadController = new AbortController();
+    pendingLoad = loadController;
+    opening = true;
+    input.clear();
     tracking.stop();
-    if (env) {
-      env.scene.remove(rig);
-      dispose(env.scene);
+    loading.hidden = false;
+    const progress = document.createElement("span");
+    progress.textContent = "Opening " + atlas[key][0] + "…";
+    loading.replaceChildren(progress);
+    if (key === "valley") button("Return to hub", () => nav("hub"), loading);
+    let next: World;
+    try {
+      if (key === "valley") {
+        const { makeValley } = await import("./valley");
+        if (request !== transition) return;
+        next = await makeValley(
+          quality.tier,
+          (label) => {
+            if (request === transition) progress.textContent = label;
+          },
+          loadController.signal,
+        );
+      } else next = makeEnvironment(key);
+    } catch (error) {
+      if (request !== transition) return;
+      console.error("Could not load world", error);
+      opening = false;
+      loading.replaceChildren(
+        document.createTextNode("Could not load " + atlas[key][0] + "."),
+      );
+      button("Retry", () => openWorld(key), loading);
+      button("Return to hub", () => nav("hub"), loading);
+      return;
     }
+    if (request !== transition || contextLost) {
+      release(next);
+      return;
+    }
+    pendingLoad = undefined;
+    if (env) release(env);
+    env = next;
     id = key;
-    env = makeEnvironment(key);
+    renderer.toneMapping =
+      id === "valley" ? T.ACESFilmicToneMapping : T.NoToneMapping;
+    renderer.shadowMap.type = T.PCFSoftShadowMap;
+    quality.reset();
+    opening = false;
     art =
       key === "lab" || key === "sculpture"
         ? sculpture(env.scene, key === "lab" ? "Sphere" : "Silk")
@@ -307,19 +409,34 @@ function boot() {
       button("Stop camera", () => tracking.stop(), a);
       for (const g of gestures) button(g, () => art?.gesture(g), a);
     } else button("Return to hub", () => nav("hub"), a);
-    resize();
+    applyQuality();
+    loading.hidden = true;
   }
   function route() {
     const p = location.hash.slice(1);
     openWorld(places.includes(p as Place) ? (p as Place) : "hub");
   }
+  const guide = $<HTMLButtonElement>("#guide");
+  guide.onclick = () => {
+    const caption = $("#caption");
+    caption.hidden = !caption.hidden;
+    guide.textContent = caption.hidden ? "Show guide" : "Hide guide";
+    guide.setAttribute("aria-expanded", String(!caption.hidden));
+  };
   $("#directory").onclick = directory;
   $("#settings").onclick = settings;
   $("#close").onclick = () => panel.close();
   window.addEventListener("resize", resize);
   window.addEventListener("hashchange", route);
-  window.addEventListener("pagehide", () => tracking.stop());
+  window.addEventListener("pagehide", () => {
+    tracking.stop();
+    pendingLoad?.abort();
+  });
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted && pendingLoad?.signal.aborted) route();
+  });
   document.addEventListener("visibilitychange", () => {
+    quality.reset();
     if (document.hidden) {
       tracking.stop();
       input.clear();
@@ -335,11 +452,16 @@ function boot() {
   });
   canvas.addEventListener("webglcontextlost", (e) => {
     e.preventDefault();
+    contextLost = true;
+    pendingLoad?.abort();
+    ++transition;
+    renderer.setAnimationLoop(null);
     tracking.stop();
     $("#loading").hidden = false;
     $("#loading").textContent =
       "Graphics context lost. Reload to reopen the gallery.";
   });
+  canvas.addEventListener("webglcontextrestored", () => location.reload());
   route();
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
   let last = performance.now();
@@ -347,25 +469,28 @@ function boot() {
     const delta = (now - last) / 1000;
     last = now;
     const dt = Math.max(0, Math.min(0.05, delta));
-    if (!document.hidden && delta > 0 && delta < 0.2) {
-      avg += 0.025 * (delta - avg);
-      if (
-        ++samples % 180 === 0 &&
-        quality === "Auto" &&
-        !renderer.xr.isPresenting
-      ) {
-        const next = avg > 0.028 ? true : avg < 0.019 ? false : low;
-        if (next !== low) {
-          low = next;
-          resize();
-        }
-      }
-    }
+    if (
+      !env ||
+      contextLost ||
+      document.hidden ||
+      (!loading.hidden && !renderer.xr.isPresenting)
+    )
+      return;
+    if (!opening && !renderer.xr.isPresenting && quality.observe(delta))
+      applyQuality();
     if (!reducedMotion.matches) elapsed += dt;
-    if (renderer.xr.isPresenting) xrMove(dt);
-    if (!panel.open)
+    previous.copy(rig.position);
+    if (!opening && renderer.xr.isPresenting) xrMove(dt);
+    if (!opening && !panel.open)
       input.update(dt, renderer.xr.isPresenting, env.height, env.limit);
-    if (id === "hub" && !panel.open) {
+    if (
+      env.resolveMove &&
+      (previous.x !== rig.position.x || previous.z !== rig.position.z)
+    ) {
+      env.resolveMove(previous, rig.position);
+      rig.position.y = env.height(rig.position.x, rig.position.z);
+    }
+    if (id === "hub" && !opening && !panel.open) {
       for (const gate of env.gates) {
         const center = gate.parent!.position;
         if (
@@ -377,11 +502,10 @@ function boot() {
         }
       }
     }
-    env.update(elapsed);
+    env.update(elapsed, rig.position);
     art?.update(elapsed, dt);
     if (split && !renderer.xr.isPresenting) stereo.render(env.scene, camera);
     else renderer.render(env.scene, camera);
-    $("#loading").hidden = true;
   });
 }
 try {
