@@ -11,8 +11,8 @@ export const atlas = {
   ],
   valley: [
     "Portal Valley",
-    "Tidal sanctuary",
-    "Walk the banks of a still inlet toward the luminous gate.",
+    "Forest sanctuary",
+    "Follow the stream to the stone arch. Select its opening to enter Edge of Earth.",
   ],
   field: [
     "Starlight Field",
@@ -32,3 +32,16 @@ export const atlas = {
 } as const;
 export type Place = keyof typeof atlas;
 export const places = Object.keys(atlas) as Place[];
+
+export const gallerySections: { title: string; entries: Place[] }[] = [
+  { title: "Explore worlds", entries: ["hub", "valley", "earth", "field"] },
+  { title: "Creative lab", entries: ["sculpture", "lab"] },
+];
+export const accessHints: Record<Place, string> = {
+  hub: "Walk or tap a gate",
+  valley: "Walk · Select the stone arch",
+  earth: "Walk · Look around",
+  field: "Walk · Look around",
+  sculpture: "Pointer or touch · Six forms",
+  lab: "Camera or manual gestures",
+};

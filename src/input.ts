@@ -2,6 +2,16 @@ import * as T from "three";
 export class Input {
   private keys = new Set<string>();
   private joy = new T.Vector2();
+  private forward = new T.Vector3();
+  private right = new T.Vector3();
+  private sensorEuler = new T.Euler();
+  private sensorRotation = new T.Quaternion();
+  private screenRotation = new T.Quaternion();
+  private screenAxis = new T.Vector3(0, 0, 1);
+  private upright = new T.Quaternion().setFromAxisAngle(
+    new T.Vector3(1, 0, 0),
+    -Math.PI / 2,
+  );
   private yaw = 0;
   private pitch = 0;
   private drag?: { id: number; x: number; y: number; travel: number };
@@ -86,7 +96,7 @@ export class Input {
   reset() {
     this.pitch = 0;
     this.yaw = this.sensor
-      ? -new T.Euler().setFromQuaternion(this.sensor, "YXZ").y
+      ? -this.sensorEuler.setFromQuaternion(this.sensor, "YXZ").y
       : 0;
     this.clear();
   }
@@ -95,19 +105,19 @@ export class Input {
     const first = !this.sensorSeen;
     this.sensorSeen = true;
     const rad = Math.PI / 180;
-    this.sensor = new T.Quaternion()
+    this.sensor = this.sensorRotation
       .setFromEuler(
-        new T.Euler(e.beta * rad, e.alpha * rad, -e.gamma * rad, "YXZ"),
-      )
-      .multiply(
-        new T.Quaternion().setFromAxisAngle(
-          new T.Vector3(1, 0, 0),
-          -Math.PI / 2,
+        this.sensorEuler.set(
+          e.beta * rad,
+          e.alpha * rad,
+          -e.gamma * rad,
+          "YXZ",
         ),
       )
+      .multiply(this.upright)
       .multiply(
-        new T.Quaternion().setFromAxisAngle(
-          new T.Vector3(0, 0, 1),
+        this.screenRotation.setFromAxisAngle(
+          this.screenAxis,
           -(
             screen.orientation?.angle ??
             Number(
@@ -171,11 +181,11 @@ export class Input {
       if (this.keys.has("ArrowLeft")) this.yaw += dt * 1.6;
       if (this.keys.has("ArrowRight")) this.yaw -= dt * 1.6;
     }
-    const dir = new T.Vector3();
+    const dir = this.forward;
     this.camera.getWorldDirection(dir);
     dir.y = 0;
     dir.normalize();
-    const side = new T.Vector3(-dir.z, 0, dir.x);
+    const side = this.right.set(-dir.z, 0, dir.x);
     const x =
         Number(this.keys.has("KeyD")) -
         Number(this.keys.has("KeyA")) +
