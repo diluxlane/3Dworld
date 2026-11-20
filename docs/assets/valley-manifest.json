@@ -1,0 +1,425 @@
+[
+  {
+    "name": "Forest Ground 04",
+    "authors": [
+      "Rob Tuytel (photography and processing)",
+      "Rico Cilliers (minor adjustment)"
+    ],
+    "url": "https://polyhaven.com/a/forest_ground_04",
+    "license": "CC0-1.0",
+    "licenseUrl": "https://polyhaven.com/license",
+    "scene": "Portal Valley",
+    "attributionRequired": false,
+    "commercialReuse": true,
+    "redistribution": "Permitted, including edited assets.",
+    "originalFormat": "Three 1K JPEG PBR maps",
+    "sourceBytes": 3068218,
+    "sourceFiles": [
+      "forest_ground_04/Diffuse.jpg",
+      "forest_ground_04/nor_gl.jpg",
+      "forest_ground_04/Rough.jpg"
+    ],
+    "optimizedFiles": [
+      {
+        "path": "public/valley/ground-color.webp",
+        "bytes": 316806,
+        "sha256": "0300bbf9c5ecda1cfbbda82ed762c272978f081f13510cb50c4362512cbcb73a",
+        "format": "WebP",
+        "width": 1024,
+        "height": 1024
+      },
+      {
+        "path": "public/valley/ground-normal.webp",
+        "bytes": 116464,
+        "sha256": "21497602cd1617a61de7f14a475c096cec3b043350a896adeb24285813d13b5e",
+        "format": "WebP",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "path": "public/valley/ground-rough.webp",
+        "bytes": 21678,
+        "sha256": "3ccf587fcc8bfcd6cdc65cee8e303c6ebc880caba9a882e5f2991e2373afe75a",
+        "format": "WebP",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "path": "public/valley/low/ground-color.webp",
+        "bytes": 75510,
+        "sha256": "d3f182bfa4f15fb58842f08ddd6ff9840308914f37fdd55507e389bad3fade97",
+        "format": "WebP",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "path": "public/valley/low/ground-normal.webp",
+        "bytes": 19394,
+        "sha256": "5f60ce6644824847739e91731ac5324c92eb0316af2d406f2f940f24204fb9e8",
+        "format": "WebP",
+        "width": 256,
+        "height": 256
+      },
+      {
+        "path": "public/valley/low/ground-rough.webp",
+        "bytes": 4478,
+        "sha256": "81f3d33ab94aff64740670df2dcbfa9b37b836c833be24c16a1fc32734ac8ced",
+        "format": "WebP",
+        "width": 256,
+        "height": 256
+      }
+    ],
+    "limitations": "Dry forest gravel. The route combines this with moss on sheltered banks."
+  },
+  {
+    "name": "Rock Face",
+    "authors": [
+      "Greg Zaal (photography)",
+      "Dario Barresi (processing)"
+    ],
+    "url": "https://polyhaven.com/a/rock_face",
+    "license": "CC0-1.0",
+    "licenseUrl": "https://polyhaven.com/license",
+    "scene": "Portal Valley",
+    "attributionRequired": false,
+    "commercialReuse": true,
+    "redistribution": "Permitted, including edited assets.",
+    "originalFormat": "Two 1K JPEG PBR maps",
+    "sourceBytes": 1872578,
+    "sourceFiles": [
+      "rock_face/Diffuse.jpg",
+      "rock_face/nor_gl.jpg"
+    ],
+    "optimizedFiles": [
+      {
+        "path": "public/valley/rock-color.webp",
+        "bytes": 82332,
+        "sha256": "96a7f0a255babbfce87f354b37af3b955bd1c8a4bcd91ba786b0d2c9dc712b70",
+        "format": "WebP",
+        "width": 1024,
+        "height": 1024
+      },
+      {
+        "path": "public/valley/rock-normal.webp",
+        "bytes": 103374,
+        "sha256": "1276b00194a58ba1d71fbd01c6b97a8325c095d0dda176f47b836d2993a096ed",
+        "format": "WebP",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "path": "public/valley/low/rock-color.webp",
+        "bytes": 21962,
+        "sha256": "cd37ec3390837d153be35e450e3fcb70d323e42dafe91c8d3a85f423df4f3647",
+        "format": "WebP",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "path": "public/valley/low/rock-normal.webp",
+        "bytes": 17010,
+        "sha256": "0c3b35784934a89b272f4cbd02d7d3aff720b0f8c3e7ac2b658ee19b4affa236",
+        "format": "WebP",
+        "width": 256,
+        "height": 256
+      }
+    ],
+    "limitations": "Tiling cliff material. Macro color repetition is visible if scale is excessive."
+  },
+  {
+    "name": "Aerial Grass Rock",
+    "authors": [
+      "Rob Tuytel"
+    ],
+    "url": "https://polyhaven.com/a/aerial_grass_rock",
+    "license": "CC0-1.0",
+    "licenseUrl": "https://polyhaven.com/license",
+    "scene": "Portal Valley",
+    "attributionRequired": false,
+    "commercialReuse": true,
+    "redistribution": "Permitted, including edited assets.",
+    "originalFormat": "1K JPEG base color",
+    "sourceBytes": 666655,
+    "sourceFiles": [
+      "aerial_grass_rock/Diffuse.jpg"
+    ],
+    "optimizedFiles": [
+      {
+        "path": "public/valley/moss-color.webp",
+        "bytes": 180302,
+        "sha256": "1ed5942ef4ae06d3e78ca6ce2f9aabd8dbf3e394200afad4f02dde5f192f367e",
+        "format": "WebP",
+        "width": 1024,
+        "height": 1024
+      },
+      {
+        "path": "public/valley/low/moss-color.webp",
+        "bytes": 51258,
+        "sha256": "57622ec5171325ff5e5c62c5e9a3741d4af9e207b3d92083c2838c05c194f9c7",
+        "format": "WebP",
+        "width": 512,
+        "height": 512
+      }
+    ],
+    "limitations": "Moss, grass and rock seen from above. Macro ground color rather than individual grass blades."
+  },
+  {
+    "name": "Moss Rock Set 01",
+    "authors": [
+      "Kless Gyzen"
+    ],
+    "url": "https://polyhaven.com/a/rock_moss_set_01",
+    "license": "CC0-1.0",
+    "licenseUrl": "https://polyhaven.com/license",
+    "scene": "Portal Valley",
+    "attributionRequired": false,
+    "commercialReuse": true,
+    "redistribution": "Permitted, including edited assets.",
+    "originalFormat": "glTF, external geometry buffer, three 4K JPEG maps",
+    "sourceBytes": 8197182,
+    "sourceFiles": [
+      "rock_moss_set_01/rock_moss_set_01.gltf",
+      "rock_moss_set_01/rock_moss_set_01.bin",
+      "rock_moss_set_01/hero-Diffuse.jpg",
+      "rock_moss_set_01/hero-nor_gl.jpg",
+      "rock_moss_set_01/hero-Rough.jpg"
+    ],
+    "optimizedFiles": [
+      {
+        "path": "public/valley/boulder.glb",
+        "bytes": 424452,
+        "sha256": "aaebe624b237b11b0baf130394963aa0538ba9a7513189dbf2a06fed6cb71069",
+        "format": "glTF 2.0 binary, EXT_texture_webp",
+        "textures": [
+          {
+            "mimeType": "image/webp",
+            "width": 1024,
+            "height": 969
+          },
+          {
+            "mimeType": "image/webp",
+            "width": 512,
+            "height": 485
+          },
+          {
+            "mimeType": "image/webp",
+            "width": 512,
+            "height": 485
+          }
+        ],
+        "triangles": 5000
+      },
+      {
+        "path": "public/valley/boulder-low.glb",
+        "bytes": 33216,
+        "sha256": "096e17558c08bde694b82b3e8b72a6b3f08928d78af74223e75dd95786401a6c",
+        "format": "glTF 2.0 binary, EXT_texture_webp",
+        "textures": [
+          {
+            "mimeType": "image/webp",
+            "width": 256,
+            "height": 242
+          },
+          {
+            "mimeType": "image/webp",
+            "width": 128,
+            "height": 121
+          },
+          {
+            "mimeType": "image/webp",
+            "width": 128,
+            "height": 121
+          }
+        ],
+        "triangles": 300
+      }
+    ],
+    "limitations": "One selected scan from the set of six; repeated placements share its silhouette."
+  },
+  {
+    "name": "Fern 02",
+    "authors": [
+      "Rob Tuytel (scanning)",
+      "Rico Cilliers (modeling)"
+    ],
+    "url": "https://polyhaven.com/a/fern_02",
+    "license": "CC0-1.0",
+    "licenseUrl": "https://polyhaven.com/license",
+    "scene": "Portal Valley",
+    "attributionRequired": false,
+    "commercialReuse": true,
+    "redistribution": "Permitted, including edited assets.",
+    "originalFormat": "glTF, external geometry buffer, three 1K JPEG maps and 1K alpha map",
+    "sourceBytes": 1392399,
+    "sourceFiles": [
+      "fern_02/fern_02.gltf",
+      "fern_02/textures/fern_02_arm_1k.jpg",
+      "fern_02/textures/fern_02_diff_1k.jpg",
+      "fern_02/textures/fern_02_nor_gl_1k.jpg",
+      "fern_02/fern_02.bin",
+      "fern_02/Alpha.jpg"
+    ],
+    "optimizedFiles": [
+      {
+        "path": "public/valley/fern.glb",
+        "bytes": 107180,
+        "sha256": "56b6b1685f024db125e1579a70930596217b6c0824245704efafe88213e9be45",
+        "format": "glTF 2.0 binary, EXT_texture_webp",
+        "textures": [
+          {
+            "mimeType": "image/webp",
+            "width": 512,
+            "height": 512
+          },
+          {
+            "mimeType": "image/webp",
+            "width": 256,
+            "height": 256
+          },
+          {
+            "mimeType": "image/webp",
+            "width": 256,
+            "height": 256
+          }
+        ],
+        "triangles": 784
+      }
+    ],
+    "limitations": "One clump selected from the set. Cutout geometry is appropriate below eye level."
+  },
+  {
+    "name": "Fir Tree 01 texture components",
+    "authors": [
+      "Rob Tuytel (photography)",
+      "Rico Cilliers (modeling)"
+    ],
+    "url": "https://polyhaven.com/a/fir_tree_01",
+    "license": "CC0-1.0",
+    "licenseUrl": "https://polyhaven.com/license",
+    "scene": "Portal Valley",
+    "attributionRequired": false,
+    "commercialReuse": true,
+    "redistribution": "Permitted, including edited assets.",
+    "originalFormat": "Four 1K JPEG maps",
+    "sourceBytes": 2560248,
+    "sourceFiles": [
+      "fir_tree_01/twig_diff.jpg",
+      "fir_tree_01/twig_alpha.jpg",
+      "fir_tree_01/bark_diff.jpg",
+      "fir_tree_01/bark_nor_gl.jpg"
+    ],
+    "optimizedFiles": [
+      {
+        "path": "public/valley/tree.glb",
+        "bytes": 519016,
+        "sha256": "db8ef40f488ec7d5c0166773f58fc0c4b435feda201d96eefe1c6c891156f831",
+        "format": "glTF 2.0 binary, EXT_texture_webp",
+        "textures": [
+          {
+            "mimeType": "image/webp",
+            "width": 512,
+            "height": 512
+          },
+          {
+            "mimeType": "image/webp",
+            "width": 256,
+            "height": 256
+          },
+          {
+            "mimeType": "image/webp",
+            "width": 339,
+            "height": 384
+          }
+        ],
+        "triangles": 7616
+      },
+      {
+        "path": "public/valley/tree-impostor.webp",
+        "bytes": 82606,
+        "sha256": "633594fed24cadef1e9c885f67d8579bf320ff137a4c360841e1cf28f82345fb",
+        "format": "WebP",
+        "width": 512,
+        "height": 768
+      }
+    ],
+    "limitations": "Original gallery trunk/branch mesh with scanned needles and bark; one orthographic foliage view for distant use."
+  },
+  {
+    "name": "Tree Small 02",
+    "authors": [
+      "Rico Cilliers"
+    ],
+    "url": "https://polyhaven.com/a/tree_small_02",
+    "license": "CC0-1.0",
+    "licenseUrl": "https://polyhaven.com/license",
+    "scene": "Portal Valley",
+    "attributionRequired": false,
+    "commercialReuse": true,
+    "redistribution": "Permitted, including edited assets.",
+    "originalFormat": "glTF, external geometry buffer, nine JPEG maps and 1K leaf alpha",
+    "sourceBytes": 101219226,
+    "sourceFiles": [
+      "tree_small_02/tree_small_02.gltf",
+      "tree_small_02/textures/tree_small_02_branch_nor_gl_1k.jpg",
+      "tree_small_02/textures/tree_small_02_branch_diff_1k.jpg",
+      "tree_small_02/textures/tree_small_02_branch_arm_1k.jpg",
+      "tree_small_02/textures/tree_small_02_leaves_nor_gl_1k.jpg",
+      "tree_small_02/textures/tree_small_02_leaves_diff_1k.jpg",
+      "tree_small_02/textures/tree_small_02_leaves_arm_1k.jpg",
+      "tree_small_02/textures/tree_small_02_nor_gl_1k.jpg",
+      "tree_small_02/textures/tree_small_02_diff_1k.jpg",
+      "tree_small_02/textures/tree_small_02_arm_1k.jpg",
+      "tree_small_02/tree_small_02.bin",
+      "tree_small_02/leaves_alpha.jpg"
+    ],
+    "optimizedFiles": [
+      {
+        "path": "public/valley/broadleaf.webp",
+        "bytes": 97074,
+        "sha256": "ec00234dda57c4347b197aec6d98859f322828838ac539d6854699912afd7f6d",
+        "format": "WebP",
+        "width": 640,
+        "height": 640
+      }
+    ],
+    "limitations": "Orthographic bake of the original wild syringa. Background foliage only. Flat under lateral inspection."
+  },
+  {
+    "name": "Lago d\u2019Isola",
+    "authors": [
+      "Andreas Mischok"
+    ],
+    "url": "https://polyhaven.com/a/lago_disola",
+    "license": "CC0-1.0",
+    "licenseUrl": "https://polyhaven.com/license",
+    "scene": "Portal Valley",
+    "attributionRequired": false,
+    "commercialReuse": true,
+    "redistribution": "Permitted, including edited assets.",
+    "originalFormat": "8192 \u00d7 4096 tone-mapped panorama and 2K Radiance HDR exposure",
+    "sourceBytes": 56619883,
+    "sourceFiles": [
+      "lago_disola/tonemapped.jpg",
+      "lago_disola/2k.hdr"
+    ],
+    "optimizedFiles": [
+      {
+        "path": "public/valley/alpine-panorama.webp",
+        "bytes": 491822,
+        "sha256": "ed31c3722739234aa19de270884cc696c7164cf2def77588b3f660d24b800b41",
+        "format": "WebP",
+        "width": 2048,
+        "height": 1024
+      },
+      {
+        "path": "public/valley/sky-light.hdr",
+        "bytes": 132657,
+        "sha256": "360f1a75deec41ca24e6994d2be1bed96212f03e2d1b1e070e34abd6346e5678",
+        "format": "Radiance RGBE",
+        "width": 256,
+        "height": 128
+      }
+    ],
+    "limitations": "Photographic distant mountains and matched HDR lighting. Foreground valley terrain occludes the source lake\u2019s winter shoreline."
+  }
+]
