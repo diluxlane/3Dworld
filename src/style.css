@@ -196,6 +196,7 @@ h2 {
   display: none;
 }
 #capture {
+  pointer-events: none;
   position: absolute;
   right: 4vw;
   top: 82px;
