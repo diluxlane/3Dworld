@@ -1,0 +1,1 @@
+{"engine":"Chromium / ANGLE SwiftShader","label":"candidate","scenes":[],"route":{},"tiers":{},"stress":[],"checks":[],"errors":[],"version":"153.0.8010.0","gpu":{"samples":[424.841867,253.135716],"disjoint":0,"support":{"renderer":"ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)","timerQuery":true}}}

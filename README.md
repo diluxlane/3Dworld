@@ -1,6 +1,14 @@
 # My 3D World
 
-Version 0.1 of Zyberlane XR’s browser atlas. Enter the Observatory and select a physical gate, walk into its center, or open **World atlas**. Each destination is a navigable Three.js scene.
+Zyberlane XR’s browser atlas. Enter the Observatory and select a physical gate, walk into its center, or open **World atlas**. Each destination is a navigable Three.js scene.
+
+## Portal Valley review build
+
+Enter `/#valley` to follow a woodland path beside the stream. Select the stone arch to enter Edge of Earth. **Hide guide** clears the lower overlay while exploring. View & controls offers Auto, Low, Balanced and High. Geometry, shadows, water and resolution respond during play. Soil and rock texture sizes are chosen when entering the valley, so re-enter after selecting Low to measure its smaller download.
+
+The CPU/GPU camera comparison uses a synthetic stream on software Chromium. Physical Redmi and headset acceptance are still open. The cinema audit identifies an existing player in the Zyberlane XR repository.
+
+[Source and cinema audit](docs/REBUILD-AUDIT.md) · [Rendering research](docs/RESEARCH.md) · [Asset sources and offline workflow](docs/assets/VALLEY.md) · [Motion and collision checks](docs/evidence/functional/README.md) · [Gesture timing](docs/evidence/tracking/README.md)
 
 ## Run locally
 
@@ -12,6 +20,10 @@ npm run dev
 ```
 
 Open the localhost URL printed by Vite. To check the deployable build, run `npm run build` followed by `npm run preview`. Both development startup and production build prepare the local MediaPipe WASM files and bundle the tracking worker. The gallery itself runs from static files. On first camera use the browser retrieves Google’s versioned hand-landmarker model. Camera frames and results stay on the device.
+
+## Record a physical-device test
+
+Open the preview with `/?profile=1#valley`. Choose a quality tier, then **View & controls → Record 60 seconds**. Walk toward the stone arch while recording. Open **View & controls → Download frame data** to save the trace to the device. Changing world or backgrounding the page ends a partial trace. The export includes individual frame intervals, active tier, stereo mode, draw calls, triangles and renderer resource counts. The browser generates this file locally. Repeat after the phone has warmed up and record its browser version alongside the file.
 
 ## Vercel preview
 
@@ -32,6 +44,6 @@ From the project root, run `npx vercel`, sign in and select a project. Use the V
 
 ## Assets
 
-Scene geometry, materials, particle forms, flowers, gates and interface were authored for this project. The included raster coastline mask derives from the Natural Earth 1:110m land dataset. Its projection feeds a custom Earth shader. The hand model and runtime have their own upstream distribution terms.
+Portal Valley combines original scenery with optimized external models, photographic surfaces and panorama data. The asset manifest records creators, source URLs, licenses and derivative sizes. The other worlds use original procedural scenery and particle forms. [Valley asset manifest](docs/assets/valley-manifest.json) The included raster coastline mask derives from the Natural Earth 1:110m land dataset. Its projection feeds a custom Earth shader. The hand model and runtime have their own upstream distribution terms.
 
 [Natural Earth land source](https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_110m_land.geojson) · [Natural Earth terms](https://www.naturalearthdata.com/about/terms-of-use/) · [MediaPipe Hand Landmarker](https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker/web_js) · [Vercel Vite guide](https://vercel.com/docs/frameworks/frontend/vite)

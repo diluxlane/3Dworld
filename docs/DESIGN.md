@@ -10,7 +10,12 @@ src/
   catalog.ts                 World identifiers, titles and interpretive captions
   main.ts                    Routing, XR sessions, render loop, quality and menus
   environment.ts             Seeded terrain, skies, gates, vegetation and room construction
-  water.ts                   Planar reflection and animated surface distortion
+  valley.ts                  Lazy, cancellable asset loading and scene ownership
+  valley-ground.ts           Terrain, material blending and ground sampling
+  valley-dressing.ts         Instanced plants, rocks, collision hulls and LOD
+  valley-arch.ts             Original stone gateway to Edge of Earth
+  valley-water.ts            Stream and tiered reflections
+  quality.ts                 Sustained frame-time adaptation
   particles.ts               Shape generators, morph buffers and local forces
   input.ts                   Locomotion, touch, sensor calibration and recenter
   tracking.ts                Camera lifecycle, landmark overlay and gesture classification
@@ -37,7 +42,7 @@ The atlas pairs quiet editorial typography with concentrated light in the world 
 | --- | --- | --- |
 | The Observatory | Anticipation | A circular stone court above ridges. Five illuminated gates form an arc around the arrival point. Earth is straight ahead. Colored gate interiors and nameplates identify the other destinations. |
 | Edge of Earth | Awe | A basalt shelf hangs over a low cloud bank. A sunrise silhouettes its fractured rim. Walk toward the edge or along either flank to change the overlap between the ledge, clouds and curved Earth. Geographic coastlines, cloud bands and grazing light give the planet scale. |
-| Portal Valley | Serenity and mystery | A winding inlet divides forested banks. The starting sightline leads to a pale green gate. The water reflects the forest and gate through a small, rippled reflection target. The valley gate is a landmark. |
+| Portal Valley | Serenity and mystery | A winding inlet divides forested banks. The starting sightline leads to a pale green gate. The water reflects the forest and gate through a small, rippled reflection target. Selecting the arch opens Edge of Earth. |
 | Starlight Field | Wonder | A curving unplanted path cuts through a violet valley. Low branching plants carry four luminous petals each. Detached points of light hang above the flower heads. Walk across or along the trail. |
 | Particle Sculpture Room | Abstract art | A dark cylindrical pavilion frames a mint-to-orchid sculpture over marked floor rings. Orbit it on foot, draw across it with the pointer and morph between Silk, Orbit, Wave, Knot, Sphere and Cube. |
 | Hand Tracking Particle Lab | Experimentation | Cool structural ribs and a pale constellation define the studio. The camera inset shows exactly which hand is driving the object. Movement, a labeled gesture and the resulting particle motion provide immediate feedback. |
@@ -67,4 +72,4 @@ The worker processes at most one transferred frame at a time, sampled at up to 1
 4. **XR entry, implemented; hardware acceptance pending.** Permission-gated orientation, split eyes, capability-gated floor-level headset sessions and controller selection.
 5. **Gesture influence, implemented for particles.** A later editor can consume the same discrete gesture events for selecting, placing and moving scene objects. Persistent editing and headset-native joint tracking are future work.
 
-Auto quality samples frame intervals, changes resolution with hysteresis and selects 6,000 or 12,000 sculpture points. Low caps pixel ratio at 1, High at 1.7. Standard frustum culling applies to scene objects. The 384-square valley reflection is the main extra scene pass. MediaPipe assets load when tracking starts. Device testing should decide whether to reduce reflection resolution or instance density before increasing geometrical detail.
+Auto starts Low on coarse-pointer devices and Balanced on fine-pointer devices. It steps down after two slow 1.5-second windows, and up after six fast windows. Explicit quality selection overrides adaptation. Low, Balanced and High cap pixel ratio at 0.8, 1.25 and 1.7 respectively. If Auto remains slow at Low, it lowers the pixel ratio in two steps to 0.6, then restores resolution in stages after sustained recovery. Portal Valley uses impostors and mesh instances at different distances. Planar water reflections run selectively on High in single view. Texture residency is selected on entry. The procedural worlds retain their existing material and lighting direction. See the [source audit](REBUILD-AUDIT.md) and [asset manifest](assets/valley-manifest.json).

@@ -1,0 +1,114 @@
+{
+  "browser": "153.0.8010.0",
+  "target": "local probe build",
+  "checks": [
+    {
+      "name": "Hub loads without valley assets",
+      "measured": {
+        "hubResources": 0
+      }
+    },
+    {
+      "name": "Keyboard atlas entry, forward movement and ground following",
+      "measured": {
+        "distance": 0.26679999999999904,
+        "groundError": 0
+      }
+    },
+    {
+      "name": "Drag look, four quality choices and recenter",
+      "measured": {}
+    },
+    {
+      "name": "Production collision function blocks masonry and boulder",
+      "measured": {
+        "tests": [
+          {
+            "object": "stone pier",
+            "x": -7.9799999999999995,
+            "z": -17.8,
+            "min": 0.6,
+            "minDistance": 0.6699999999999982,
+            "maxGroundError": 0
+          },
+          {
+            "object": "western boulder",
+            "x": -11,
+            "z": 1.5,
+            "min": 0.9,
+            "minDistance": 1.3239999999999998,
+            "maxGroundError": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "Arch mesh click opens Earth and browser Back restores valley",
+      "measured": {
+        "pixel": {
+          "x": 293.3234059339451,
+          "y": 217.0054381628615
+        }
+      }
+    },
+    {
+      "name": "Three valley/lab/hub cycles settle renderer resource counts",
+      "measured": {
+        "settled": [
+          [
+            4,
+            44
+          ],
+          [
+            4,
+            44
+          ],
+          [
+            4,
+            44
+          ]
+        ]
+      }
+    },
+    {
+      "name": "Delayed valley requests cannot replace a newer route",
+      "measured": {}
+    },
+    {
+      "name": "Failed valley downloads show recoverable error and replay succeeds",
+      "measured": {}
+    },
+    {
+      "name": "Two-eye phone renderer enters and restores normal view",
+      "measured": {}
+    },
+    {
+      "name": "Portrait two-finger joystick and look operate together; landscape fits",
+      "measured": {}
+    },
+    {
+      "name": "Missing orientation data returns to touch look",
+      "measured": {}
+    },
+    {
+      "name": "Synthetic orientation changes view and recenter resets heading",
+      "measured": {
+        "rotationDegrees": 50.00000000000008,
+        "recenterDot": 0.9999999999999998
+      }
+    },
+    {
+      "name": "Browser immersive-session capability observed",
+      "measured": {
+        "api": true,
+        "immersive": false
+      }
+    },
+    {
+      "name": "Lost WebGL context surfaces error, restores and reloads route",
+      "measured": {}
+    }
+  ],
+  "errors": [],
+  "passed": true
+}
