@@ -21,6 +21,10 @@ npm run dev
 
 Open the localhost URL printed by Vite. To check the deployable build, run `npm run build` followed by `npm run preview`. Both development startup and production build prepare the local MediaPipe WASM files and bundle the tracking worker. The gallery itself runs from static files. On first camera use the browser retrieves Google’s versioned hand-landmarker model. Camera frames and results stay on the device.
 
+## Record a physical-device test
+
+Open the preview with `/?profile=1#valley`. Choose a quality tier, then **View & controls → Record 60 seconds**. Walk toward the stone arch while recording. Open **View & controls → Download frame data** to save the trace to the device. Changing world or backgrounding the page ends a partial trace. The export includes individual frame intervals, active tier, stereo mode, draw calls, triangles and renderer resource counts. The browser generates this file locally. Repeat after the phone has warmed up and record its browser version alongside the file.
+
 ## Vercel preview
 
 From the project root, run `npx vercel`, sign in and select a project. Use the Vite preset, the repository root, build command `npm run build`, and output directory `dist`. The default CLI deployment creates a preview. Open its HTTPS URL directly on your phone for camera, orientation and fullscreen permission tests. The hash routes support direct links such as `/#earth` and `/#lab` on static hosts.

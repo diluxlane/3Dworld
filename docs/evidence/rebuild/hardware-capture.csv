@@ -1,0 +1,1 @@
+device_model,operating_system,browser_version,build_commit,world,quality,presentation_mode,viewport,dpr,session_seconds,median_frame_ms,p95_frame_ms,worst_frame_ms,median_fps,cold_load_ms,peak_js_heap_bytes,geometry_count,texture_count,draw_calls,triangles,gyro_recenter,camera_lifecycle,thermal_behavior,notes

@@ -1,7 +1,7 @@
 export type Tier = "Low" | "Balanced" | "High";
 export type Quality = Tier | "Auto";
 const tiers: Tier[] = ["Low", "Balanced", "High"];
-export const pixelRatioCap: Record<Tier, number> = {
+const pixelRatioCap: Record<Tier, number> = {
   Low: 0.8,
   Balanced: 1.25,
   High: 1.7,
@@ -11,6 +11,10 @@ export const pixelRatioCap: Record<Tier, number> = {
 export class QualityControl {
   mode: Quality = "Auto";
   tier: Tier;
+  private lowResolutionSteps = 0;
+  get resolutionLimit() {
+    return pixelRatioCap[this.tier] - this.lowResolutionSteps * 0.1;
+  }
   private elapsed = 0;
   private frames = 0;
   private slow = 0;
@@ -20,6 +24,7 @@ export class QualityControl {
   }
   select(mode: Quality) {
     this.mode = mode;
+    this.lowResolutionSteps = 0;
     this.tier = mode === "Auto" ? (this.coarse ? "Low" : "Balanced") : mode;
     this.reset();
   }
@@ -36,6 +41,15 @@ export class QualityControl {
     this.fast = mean < 0.018 ? this.fast + 1 : 0;
     this.elapsed = this.frames = 0;
     const index = tiers.indexOf(this.tier);
+    if (this.tier === "Low") {
+      const reduce = this.slow >= 2 && this.lowResolutionSteps < 2;
+      const recover = this.fast >= 3 && this.lowResolutionSteps > 0;
+      if (reduce || recover) {
+        this.lowResolutionSteps += reduce ? 1 : -1;
+        this.reset();
+        return true;
+      }
+    }
     const step =
       this.slow >= 2 && index > 0 ? -1 : this.fast >= 6 && index < 2 ? 1 : 0;
     if (!step) return false;

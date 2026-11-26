@@ -217,3 +217,50 @@ export function makeGround(
   ground.receiveShadow = true;
   return ground;
 }
+
+/** Low keeps every cell under the player's feet, decimating only the surrounding hills. */
+export function makeLowGround(full: T.Mesh, maps: ValleySurfaces) {
+  const keep = axis
+    .map((v, i) =>
+      Math.abs(v) <= 29.76 || i === 0 || i === size - 1 || i % 6 === 0 ? i : -1,
+    )
+    .filter((i) => i !== -1);
+  const indices: number[] = [];
+  for (let row = 0; row < keep.length - 1; row++)
+    for (let col = 0; col < keep.length - 1; col++) {
+      const west = keep[col],
+        east = keep[col + 1],
+        south = keep[row] * size,
+        north = keep[row + 1] * size;
+      indices.push(
+        south + west,
+        north + west,
+        south + east,
+        south + east,
+        north + west,
+        north + east,
+      );
+    }
+  const geo = new T.BufferGeometry();
+  for (const name of ["position", "uv", "normal", "landMix"])
+    geo.setAttribute(name, full.geometry.getAttribute(name));
+  geo.setIndex(indices);
+  // Bake the sun direction, slope blend and canopy shade per vertex. Only two photo samples are needed per pixel.
+  const mat = new T.ShaderMaterial({
+    uniforms: { soil: { value: maps.ground }, moss: { value: maps.moss } },
+    vertexShader: `attribute vec4 landMix;varying vec2 coord;varying vec4 land;
+ void main(){
+ vec4 eye=modelViewMatrix*vec4(position,1.);
+ float sunlight=max(dot(normalize(normal),normalize(vec3(-.39,.773,-.50))),0.);
+ float cover=clamp(.60+.48*landMix.z-.65*landMix.x-landMix.y,0.,1.);
+ land=vec4(cover,(.42+.94*sunlight)*landMix.w*(.82+.28*landMix.z),landMix.y,1.-exp(-.00004356*eye.z*eye.z));
+ coord=uv;gl_Position=projectionMatrix*eye;}`,
+    fragmentShader: `uniform sampler2D soil,moss;varying vec2 coord;varying vec4 land;
+ void main(){vec3 base=mix(texture2D(soil,coord).rgb*mix(vec3(.78,.87,.69),vec3(1.16,.94,.74),land.z),texture2D(moss,coord*.81).rgb,land.x);
+ gl_FragColor=vec4(mix(base*land.y,vec3(.215,.283,.296),land.w),1.);
+ #include <tonemapping_fragment>
+ #include <colorspace_fragment>
+ }`,
+  });
+  return new T.Mesh(geo, mat);
+}

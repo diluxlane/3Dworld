@@ -1,0 +1,8 @@
+{
+  "samples": 13456,
+  "stepMeters": 0.5,
+  "minimumEyeClearanceMeters": 1.6999994544759622,
+  "maxFloorAboveRigMeters": 5.45524037609546e-7,
+  "maxFloorBelowRigMeters": 7.468715215175337e-7,
+  "p95AbsoluteErrorMeters": 1.1920136788745594e-7
+}

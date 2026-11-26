@@ -319,6 +319,8 @@ export function dressValley(
   const nearTrees = batches(scene, treeParts, 26, true),
     distantTrees = batches(scene, billboard.parts, trees.length, false);
   const broadTrees = batches(scene, deciduous.parts, trees.length, false);
+  // Depth-test alpha cutouts after solid ground and boulders; hidden canopy fragments can be rejected early.
+  for (const batch of [...distantTrees, ...broadTrees]) batch.renderOrder = 1;
   const undergrowth = batches(scene, fernParts, ferns.length, false);
   const boulders = batches(scene, rockParts, 14, true),
     farBoulders = batches(
@@ -353,7 +355,7 @@ export function dressValley(
     grass.sort(sort);
     const archCluster = (i: Item) =>
       Math.abs(i.x - portal.x) < 4.5 && Math.abs(i.z - portal.z) < 2.2;
-    const close = tier === "Low" ? 3 : tier === "High" ? 14 : 7;
+    const close = tier === "Low" ? 1 : tier === "High" ? 14 : 7;
     const near = trees.slice(0, close);
     fill(nearTrees, near, near.length);
     const far = trees.slice(close);
@@ -364,28 +366,29 @@ export function dressValley(
       const d = Math.hypot(tree.x - x, tree.z - z),
         factor = Math.abs(Math.sin(tree.turn * 177.91));
       if (
-        d > (tier === "High" ? 38 : tier === "Low" ? 14 : 24) &&
-        factor > (tier === "High" ? 0.94 : tier === "Low" ? 0.33 : 0.62)
+        d > (tier === "High" ? 38 : tier === "Low" ? 11 : 24) &&
+        factor > (tier === "High" ? 0.94 : tier === "Low" ? 0.26 : 0.62)
       )
         continue;
       (tree.turn < 2.38 && tree.y < 19 ? leafy : pines).push(tree);
     }
     fill(distantTrees, pines, pines.length);
     fill(broadTrees, leafy, leafy.length);
-    const fernCount = tier === "High" ? 90 : tier === "Low" ? 23 : 48;
-    const nearFerns = ferns.slice(0, fernCount - 9);
+    const fernCount = tier === "High" ? 90 : tier === "Low" ? 11 : 48;
+    const archFerns = tier === "Low" ? 3 : 9;
+    const nearFerns = ferns.slice(0, fernCount - archFerns);
     fill(
       undergrowth,
       nearFerns.concat(
         ferns
           .filter((v) => archCluster(v) && !nearFerns.includes(v))
-          .slice(0, 9),
+          .slice(0, archFerns),
       ),
       fernCount,
     );
-    const rockNear = tier === "High" ? 8 : tier === "Low" ? 2 : 5;
+    const rockNear = tier === "High" ? 8 : tier === "Low" ? 1 : 5;
     fill(boulders, rocks, rockNear);
-    const rockLimit = tier === "High" ? 140 : tier === "Low" ? 40 : 70;
+    const rockLimit = tier === "High" ? 140 : tier === "Low" ? 27 : 70;
     const midRocks = rocks.slice(rockNear, rockLimit - 12);
     const landmarkRocks = rocks.filter(
       (v) =>
@@ -397,7 +400,7 @@ export function dressValley(
     fill(
       grassBatches,
       grass,
-      tier === "High" ? 1900 : tier === "Low" ? 360 : 920,
+      tier === "High" ? 1900 : tier === "Low" ? 130 : 920,
     );
     lodX = x;
     lodZ = z;

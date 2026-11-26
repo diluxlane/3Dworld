@@ -1,7 +1,7 @@
 import * as T from "three";
 import { HDRLoader } from "three/examples/jsm/loaders/HDRLoader.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { terrainHeight, makeGround } from "./valley-ground";
+import { terrainHeight, makeGround, makeLowGround } from "./valley-ground";
 import {
   dressValley,
   resolveObstacles,
@@ -185,13 +185,18 @@ export async function makeValley(
       broadleaf,
       tier,
     );
-    scene.add(makeGround(surfaces, dressing.shade));
+    const terrain = makeGround(surfaces, dressing.shade),
+      lowTerrain = makeLowGround(terrain, surfaces);
+    scene.add(terrain, lowTerrain);
     const arch = addArch(scene, surfaces, dressing.obstacles);
     const water = makeStream(scene, panorama, rock);
     let current: ValleyTier | undefined;
     function setQuality(q: ValleyTier) {
       if (current === q) return;
       current = q;
+      terrain.visible = q !== "Low";
+      lowTerrain.visible = q === "Low";
+      scene.environment = q === "Low" ? null : sky;
       sun.castShadow = q !== "Low";
       const size = q === "High" ? 2048 : 1024;
       if (sun.shadow.mapSize.x !== size) {

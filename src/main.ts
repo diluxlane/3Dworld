@@ -11,12 +11,8 @@ import { makeEnvironment, dispose } from "./environment";
 import { forms, gestures, sculpture } from "./particles";
 import { Input } from "./input";
 import { Tracking } from "./tracking";
-import {
-  QualityControl,
-  pixelRatioCap,
-  type Quality,
-  type Tier,
-} from "./quality";
+import { QualityControl, type Quality, type Tier } from "./quality";
+import type { DeviceCapture } from "./device-capture";
 import "./style.css";
 type World = Omit<ReturnType<typeof makeEnvironment>, "update"> & {
   update(time: number, viewer: T.Vector3): void;
@@ -54,6 +50,9 @@ function boot() {
     elapsed = 0,
     notifyTimer = 0,
     formIndex = 0;
+  let capture: DeviceCapture | undefined;
+  const profiling = new URLSearchParams(location.search).has("profile");
+  let appliedTier: Tier | undefined;
   let pendingLoad: AbortController | undefined;
   const quality = new QualityControl(matchMedia("(pointer:coarse)").matches);
   const previous = new T.Vector3(),
@@ -220,14 +219,19 @@ function boot() {
     camera.updateProjectionMatrix();
     if (!renderer.xr.isPresenting) {
       renderer.setPixelRatio(
-        Math.min(devicePixelRatio, pixelRatioCap[quality.tier]),
+        Math.min(devicePixelRatio, quality.resolutionLimit),
       );
       stereo.setSize(innerWidth, innerHeight);
     }
     art?.quality(quality.tier === "Low");
   }
   function applyQuality() {
+    if (appliedTier === quality.tier) {
+      resize();
+      return;
+    }
     env?.setQuality?.(quality.tier);
+    appliedTier = quality.tier;
     renderer.shadowMap.enabled = id === "valley" && quality.tier !== "Low";
     renderer.shadowMap.autoUpdate = true;
     renderer.shadowMap.needsUpdate = true;
@@ -292,6 +296,36 @@ function boot() {
       "row",
     );
     vr.disabled = !xr;
+    if (profiling) {
+      button(
+        capture?.active ? "Finish device recording" : "Record 60 seconds",
+        async () => {
+          if (capture?.active) {
+            capture.stop("Stopped by user");
+            settings();
+            return;
+          }
+          if (!capture) {
+            const { DeviceCapture } = await import("./device-capture");
+            capture = new DeviceCapture(renderer, () =>
+              note("Recording finished. Export it from View & controls."),
+            );
+          }
+          capture.begin(id);
+          panel.close();
+          note("Recording frame times for 60 seconds. Explore normally.");
+        },
+        content,
+        "row",
+      );
+      if (capture?.available)
+        button(
+          "Download frame data",
+          () => capture?.download(),
+          content,
+          "row",
+        );
+    }
     const label = document.createElement("label");
     label.textContent = "Render quality  ";
     const sel = document.createElement("select");
@@ -325,6 +359,7 @@ function boot() {
     world.disposeExtras?.();
   }
   async function openWorld(key: Place) {
+    capture?.stop("Changed world");
     const request = ++transition;
     pendingLoad?.abort();
     const loadController = new AbortController();
@@ -368,6 +403,7 @@ function boot() {
     pendingLoad = undefined;
     if (env) release(env);
     env = next;
+    appliedTier = undefined;
     id = key;
     renderer.toneMapping =
       id === "valley" ? T.ACESFilmicToneMapping : T.NoToneMapping;
@@ -438,6 +474,7 @@ function boot() {
   document.addEventListener("visibilitychange", () => {
     quality.reset();
     if (document.hidden) {
+      capture?.stop("Page hidden");
       tracking.stop();
       input.clear();
     }
@@ -452,6 +489,7 @@ function boot() {
   });
   canvas.addEventListener("webglcontextlost", (e) => {
     e.preventDefault();
+    capture?.stop("Graphics context lost");
     contextLost = true;
     pendingLoad?.abort();
     ++transition;
@@ -504,8 +542,18 @@ function boot() {
     }
     env.update(elapsed, rig.position);
     art?.update(elapsed, dt);
+    capture?.beforeFrame();
     if (split && !renderer.xr.isPresenting) stereo.render(env.scene, camera);
     else renderer.render(env.scene, camera);
+    capture?.afterFrame(
+      now,
+      quality.tier,
+      renderer.xr.isPresenting
+        ? "WebXR"
+        : split
+          ? "Phone stereo"
+          : "Single view",
+    );
   });
 }
 try {
