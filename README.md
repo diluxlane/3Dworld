@@ -1,3 +1,11 @@
+My 3D World, an immersive 3D experience hub by Zyberlane XR.
+
+**Live demo:** https://3-dworld-zyberlane.vercel.app/
+
+![My 3D World, live site hero](docs/screenshot.svg)
+
+---
+
 # My 3D World
 
 Zyberlane XR’s browser atlas. Enter the Observatory and select a physical gate, walk into its center, or open **World atlas**. Each destination is a navigable Three.js scene.
